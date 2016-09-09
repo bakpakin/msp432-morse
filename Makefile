@@ -4,11 +4,7 @@
 # Modified by Calvin Rose
 #===============================================================
 
-# Require DEVICE to be specified
-ifndef DEVICE
-$(info Using default device MSP432P401R)
-DEVICE=MSP432P401R
-endif
+DEVICE ?= MSP432P401R
 
 # You should only need to change stuff here for the most part.
 
@@ -24,9 +20,9 @@ GCC_CMSIS_INC_DIR 	?= $(GCC_MSP_INC_DIR)/CMSIS
 LDDIR				:= $(GCC_MSP_INC_DIR)/$(shell echo $(DEVICE) | tr A-Z a-z)
 RM					:= rm -rf
 MKDIR				= mkdir -p -- $@
-GCC_INC_DIR 	?= usr/lib/arm-none-eabi/include
-CC              := arm-none-eabi-gcc
-GDB			    := arm-none-eabi-gdb
+GCC_INC_DIR 	?= /usr/lib/arm-none-eabi/include
+CC              ?= arm-none-eabi-gcc
+GDB			    ?= arm-none-eabi-gdb
 INCLUDES		:= -I $(GCC_CMSIS_INC_DIR) -I $(GCC_MSP_INC_DIR) -I $(GCC_INC_DIR)
 COMMONFLAGS     := -mcpu=cortex-m4 -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb -D__$(DEVICE)__ -DTARGET_IS_MSP432P4XX -Dgcc -g -gstrict-dwarf -Wall
 CFLAGS			:= $(COMMONFLAGS) -ffunction-sections -fdata-sections -MD -std=c99
