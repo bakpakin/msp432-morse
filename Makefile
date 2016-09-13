@@ -8,8 +8,8 @@ DEVICE ?= MSP432P401R
 
 # You should only need to change stuff here for the most part.
 
-SOURCES         := blinker.c
-TARGET          := blinker.out
+SOURCES         := main.c
+TARGET          := morse.out
 OBJ_DIR			:= output
 
 ######################################
