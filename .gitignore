@@ -40,3 +40,6 @@
 
 # YCM helper file
 .ycm_extra_conf.pyc
+
+# Local vim specific files
+*.vim

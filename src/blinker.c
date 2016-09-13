@@ -6,61 +6,63 @@
  */
 #define TIMESCALE 40000
 
-#define MORSE_1(F) (1 + 8*(F))
-#define MORSE_2(F) (2 + 8*(F))
-#define MORSE_3(F) (3 + 8*(F))
-#define MORSE_4(F) (4 + 8*(F))
-#define MORSE_5(F) (5 + 8*(F))
+/*
+ * Write a byte of our custom morse encoding.
+ * L is the number of dots and dashes (length), and BITS is
+ * the unshifted encoding of dots and dashes.
+ */
+#define MORSE(L, BITS) ((0x1 << (7 - (L))) | ((BITS) << (8 - (L))))
 
 /*
- * Each letter is stored as single byte. The first 3 bytes
- * Indicate how many dots and dashes in the letter, and the next 5
- * bytes indicate the dots vs dashes. A 1 is a dash, and 0 is a dot.
+ * Each letter is stored as single byte. The leading 0s are padding
+ * up to the frist 1. The remaining bits then encode dot and dashes,
+ * with 0s as dots and 1s as dashes.
+ *
  * Using international morse.
  *
- * This keeps the generated code compact, although a switch is easier to read.
+ * This keeps the generated code compact, although a switch statement is easier to read.
  * Probably a moot point on the msp432p401r.
  */
 static const uint8_t MORSE_LETTERS[] = {
-    MORSE_2(0x2), /* A */
-    MORSE_4(0x1), /* B */
-    MORSE_4(0x5), /* C */
-    MORSE_3(0x1), /* D */
-    MORSE_1(0x0), /* E */
-    MORSE_4(0x4), /* F */
-    MORSE_3(0x3), /* G */
-    MORSE_4(0X0), /* H */
-    MORSE_2(0x0), /* I */
-    MORSE_4(0xE), /* J */
-    MORSE_3(0x5), /* K */
-    MORSE_4(0x2), /* L */
-    MORSE_2(0x3), /* M */
-    MORSE_2(0x1), /* N */
-    MORSE_3(0x7), /* O */
-    MORSE_4(0x6), /* P */
-    MORSE_4(0xB), /* Q */
-    MORSE_3(0x2), /* R */
-    MORSE_3(0x0), /* S */
-    MORSE_1(0x1), /* T */
-    MORSE_3(0x4), /* U */
-    MORSE_4(0x8), /* V */
-    MORSE_3(0x6), /* W */
-    MORSE_4(0x9), /* X */
-    MORSE_4(0xD), /* Y */
-    MORSE_4(0x3), /* z */
+    MORSE(2, 0x2), /* A */
+    MORSE(4, 0x1), /* B */
+    MORSE(4, 0x5), /* C */
+    MORSE(3, 0x1), /* D */
+    MORSE(1, 0x0), /* E */
+    MORSE(4, 0x4), /* F */
+    MORSE(3, 0x3), /* G */
+    MORSE(4, 0X0), /* H */
+    MORSE(2, 0x0), /* I */
+    MORSE(4, 0xE), /* J */
+    MORSE(3, 0x5), /* K */
+    MORSE(4, 0x2), /* L */
+    MORSE(2, 0x3), /* M */
+    MORSE(2, 0x1), /* N */
+    MORSE(3, 0x7), /* O */
+    MORSE(4, 0x6), /* P */
+    MORSE(4, 0xB), /* Q */
+    MORSE(3, 0x2), /* R */
+    MORSE(3, 0x0), /* S */
+    MORSE(1, 0x1), /* T */
+    MORSE(3, 0x4), /* U */
+    MORSE(4, 0x8), /* V */
+    MORSE(3, 0x6), /* W */
+    MORSE(4, 0x9), /* X */
+    MORSE(4, 0xD), /* Y */
+    MORSE(4, 0x3), /* Z */
 };
 
 static const uint8_t MORSE_DIGITS[] = {
-    MORSE_5(0xE), /* 0 */
-    MORSE_5(0x1E),/* 1 */
-    MORSE_5(0x1C),/* 2 */
-    MORSE_5(0x18),/* 3 */
-    MORSE_5(0x10),/* 4 */
-    MORSE_5(0x0), /* 5 */
-    MORSE_5(0x1), /* 6 */
-    MORSE_5(0x3), /* 7 */
-    MORSE_5(0x7), /* 8 */
-    MORSE_5(0xF), /* 9 */
+    MORSE(5, 0xE), /* 0 */
+    MORSE(5, 0x1E),/* 1 */
+    MORSE(5, 0x1C),/* 2 */
+    MORSE(5, 0x18),/* 3 */
+    MORSE(5, 0x10),/* 4 */
+    MORSE(5, 0x0), /* 5 */
+    MORSE(5, 0x1), /* 6 */
+    MORSE(5, 0x3), /* 7 */
+    MORSE(5, 0x7), /* 8 */
+    MORSE(5, 0xF), /* 9 */
 };
 
 /*
@@ -77,23 +79,26 @@ void pause(uint32_t time) {
  * A dot is one unit, a dash is 3 units, and the time between
  * dots and dashes is also 1 unit. The time between letters is 3 units,
  * and the time between words is 5 units.
+ *
+ * This function plays a single byte, followed by a 3 unit pause.
  */
-
 void play_byte(uint8_t morse_byte) {
-    uint8_t i;
-    uint8_t count = morse_byte & 0x7;
-    for (i = 0; i < count; i++) {
+    uint8_t i = 0;
+    while (!((morse_byte >> i++) & 0x1)); /* Skip the leading 0s and the first 1 */
+    for (; i < 8; i++) {
         P1->OUT |= BIT0;
-        /* Check the (i + 3)th byte. If it is set, play a dash, otherwise play a dot. */
-        pause(((morse_byte >> i) & 0x8) ? 3 * TIMESCALE : TIMESCALE);
+        /* Check the ith byte. If it is set, play a dash, otherwise play a dot. */
+        pause(((morse_byte >> i) & 0x1) ? 3 * TIMESCALE : TIMESCALE);
         P1->OUT &= ~BIT0;
         pause(TIMESCALE);
     }
     pause(2 * TIMESCALE);
 }
 
-void play_string(const char * str) {
-    const char * c = str;
+/*
+ * Play a string.
+ */
+void play_string(const char * c) {
     while (*c) {
         if (*c >= 'a' && *c <= 'z') {
             play_byte(MORSE_LETTERS[*c - 'a']);
