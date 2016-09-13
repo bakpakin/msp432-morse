@@ -26,6 +26,8 @@ of openocd.
 
 Follow the directions in the official TI instructions for the GCC toolchain.
 
+[http://www.ti.com/lit/ug/slau688/slau688.pdf](http://www.ti.com/lit/ug/slau688/slau688.pdf)
+
 ## Using this template for your own projects
 
 At the top of the makefile, there is a source variable. It should contain the filenames of
