@@ -6,7 +6,7 @@
 
 # You should only need to change stuff here for the most part.
 
-SOURCES         := main.c
+SOURCES         := $(patsubst src/%.c, %.c, $(wildcard src/*.c))
 TARGET          := morse.out
 OBJ_DIR			:= output
 

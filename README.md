@@ -30,22 +30,6 @@ Follow the directions in the official TI instructions for the GCC toolchain.
 
 ## Using this template for your own projects
 
-At the top of the makefile, there is a source variable. It should contain the filenames of
-all source files in the src directory that you wish to use in your project.
-Append all your source files to this variable.
+Simply clone this directory, and add your source c and header files
+into the src directory.
 
-It currently looks like:
-
-```make
-SOURCES         := main.c
-```
-
-You can edit like so:
-
-```make
-
-SOURCES         := main.c source1.c source2.c etc.c
-SOURCES         += more.c evenmore.c
-```
-
-You can also just dump your header files into the src directory.
