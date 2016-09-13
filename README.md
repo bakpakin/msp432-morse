@@ -28,8 +28,9 @@ Follow the directions in the official TI instructions for the GCC toolchain.
 
 ## Using this template for your own projects
 
-At the top of the makefile, there is a source variable. Append all your source files to
-this variable.
+At the top of the makefile, there is a source variable. It should contain the filenames of
+all source files in the src directory that you wish to use in your project.
+Append all your source files to this variable.
 
 It currently looks like:
 
