@@ -3,6 +3,8 @@
 This is a sample setup for a project with an MSP432 microcontroller that can be built
 with standard opensource gcc tools.
 
+If you're not interested in the project setup, the unique c source is in src/main.c.
+
 ## Prerequisites for building
 
 You will need to install the gcc arm compiler for the microcontroller from you package manager.
@@ -23,3 +25,24 @@ of openocd.
 ## Running and debugging
 
 Follow the directions in the official TI instructions for the GCC toolchain.
+
+## Using this template for your own projects
+
+At the top of the makefile, there is a source variable. Append all your source files to
+this variable.
+
+It currently looks like:
+
+```make
+SOURCES         := main.c
+```
+
+You can edit like so:
+
+```make
+
+SOURCES         := main.c source1.c source2.c etc.c
+SOURCES         += more.c evenmore.c
+```
+
+You can also just dump your header files into the src directory.

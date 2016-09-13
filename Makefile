@@ -4,8 +4,6 @@
 # Modified by Calvin Rose
 #===============================================================
 
-DEVICE ?= MSP432P401R
-
 # You should only need to change stuff here for the most part.
 
 SOURCES         := main.c
@@ -15,6 +13,7 @@ OBJ_DIR			:= output
 ######################################
 
 # GCC Configuration
+DEVICE              ?= MSP432P401R
 GCC_MSP_INC_DIR 	?= platform/include
 GCC_CMSIS_INC_DIR 	?= $(GCC_MSP_INC_DIR)/CMSIS
 LDDIR				:= $(GCC_MSP_INC_DIR)/$(shell echo $(DEVICE) | tr A-Z a-z)
