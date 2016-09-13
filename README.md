@@ -30,6 +30,6 @@ Follow the directions in the official TI instructions for the GCC toolchain.
 
 ## Using this template for your own projects
 
-Simply clone this directory, and add your source c and header files
+Simply clone this repository / download the zip file, and add your source c and header files
 into the src directory.
 
