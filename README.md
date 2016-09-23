@@ -14,8 +14,14 @@ On Ubunutu, you can install with
 sudo apt install gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi
 ```
 
+On OSX with homebrew, do:
+
+```
+brew cask install gcc-arm-embedded
+```
+
 Then run `make` to build your project to the output directory. This produces a binary [something].out in
-the `output` folder.
+the `output` folder. Yay!, you compiled your program!
 
 To actually run and debug the project, you will need some more things. The xds110 debugger from TI
 works the best right now, but I would like to get openocd working. There are numerous snippets for openocd
