@@ -11,7 +11,7 @@ You will need to install the gcc arm compiler for the microcontroller from you p
 On Ubunutu, you can install with
 
 ```
-sudo apt install gcc-arm-none-eabi gdb-arm-none-eabi
+sudo apt install gcc-arm-none-eabi gdb-arm-none-eabi libnewlib-arm-none-eabi
 ```
 
 Then run `make` to build your project to the output directory. This produces a binary [something].out in

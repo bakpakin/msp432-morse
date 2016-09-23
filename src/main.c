@@ -4,7 +4,7 @@
 /*
  * This is the speed at which we playback the code.
  */
-#define TIMESCALE 40000
+#define TIMESCALE 20000
 
 /*
  * Write a byte of our custom morse encoding.
@@ -75,6 +75,18 @@ void pause(uint32_t time) {
 }
 
 /*
+ * Play a buzzing tone
+ */
+void buzz(uint32_t time, uint32_t halfperiod) {
+    volatile uint32_t i, j;
+    uint32_t periods = time / halfperiod;
+    for (i = periods; i > 0; i--) {
+        for (j = halfperiod; j > 0; j--);
+        P2->OUT ^= BIT7;
+    }
+}
+
+/*
  * To 'play' our morse code, we use a standard time scale.
  * A dot is one unit, a dash is 3 units, and the time between
  * dots and dashes is also 1 unit. The time between letters is 3 units,
@@ -86,10 +98,8 @@ void play_byte(uint8_t morse_byte) {
     uint8_t i = 0;
     while (!((morse_byte >> i++) & 0x1)); /* Skip the leading 0s and the first 1 */
     for (; i < 8; i++) {
-        P1->OUT |= BIT0;
         /* Check the ith byte. If it is set, play a dash, otherwise play a dot. */
-        pause(((morse_byte >> i) & 0x1) ? 3 * TIMESCALE : TIMESCALE);
-        P1->OUT &= ~BIT0;
+        buzz(((morse_byte >> i) & 0x1) ? 3 * TIMESCALE : TIMESCALE, 400);
         pause(TIMESCALE);
     }
     pause(2 * TIMESCALE);
@@ -116,7 +126,7 @@ void play_string(const char * c) {
 int main(void) {
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;
-    P1->DIR |= BIT0; /* P1 is output */
+    P2->DIR |= BIT7;
 
     play_string("Hello, Calvin!");
 }
